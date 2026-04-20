@@ -100,7 +100,8 @@
     margin-bottom: 18px;
     border: 1px solid var(--purple-100);
   }
-  .hero-emoji { font-size: 52px; display: block; margin-bottom: 14px; }
+  .hero-emoji { display: none; }
+  .hero-img { width: 100%; max-height: 220px; object-fit: cover; border-radius: var(--radius-md); margin-bottom: 16px; display: block; }
   .hero h1 {
     font-size: 26px;
     font-weight: 800;
@@ -185,7 +186,7 @@
     margin-bottom: 18px;
   }
 
-  .options { display: flex; flex-direction: column; gap: 9px; }
+  .q-img { width: 100%; border-radius: var(--radius-md); margin-bottom: 14px; display: block; object-fit: cover; max-height: 160px; }
   .opt {
     display: flex;
     align-items: flex-start;
@@ -256,7 +257,8 @@
     border-bottom: 1px solid #F0EDE8;
     margin-bottom: 20px;
   }
-  .result-emoji { font-size: 48px; display: block; margin-bottom: 10px; }
+  .result-img { width: 100%; max-height: 180px; object-fit: cover; border-radius: var(--radius-md); margin-bottom: 12px; display: block; }
+  .result-emoji { display: none; }
   .result-type {
     display: inline-block;
     font-size: 11px;
@@ -403,7 +405,7 @@
     <section id="hero-view">
       <div class="hero">
         <span class="hero-badge">🎋 端午節創作靈魂測驗</span>
-        <span class="hero-emoji">🍃</span>
+        <img class="hero-img" src="img/封面.png" alt="粽說紛紜封面">
         <h1>粽說紛紜</h1>
         <p>你的畫畫習慣，適合哪一種粽子？<br>5 道題，測出你的創作靈魂。</p>
         <button class="start-btn" onclick="startQuiz()">開始測驗</button>
@@ -454,6 +456,7 @@
 const Qs = [
   {
     q: "當你要開始一項新創作時，你通常如何熱身？",
+    img: "img/Q1.png",
     opts: [
       { l:"A", t:"蒐集大量參考資料，整理成情緒板（Mood Board）" },
       { l:"B", t:"先隨意塗鴉，讓筆尖跟著情緒走" },
@@ -462,6 +465,7 @@ const Qs = [
   },
   {
     q: "在你作品中，哪一個元素是你最絕對不退讓的？",
+    img: "img/Q2.png",
     opts: [
       { l:"A", t:"構圖的平衡感與透視的準確" },
       { l:"B", t:"畫面傳達出的故事性與情緒" },
@@ -470,6 +474,7 @@ const Qs = [
   },
   {
     q: "如果你的創作過程是一種聲音，你覺得它聽起來像？",
+    img: "img/Q3.png",
     opts: [
       { l:"A", t:"齒輪咬合的精密運作聲（穩紮穩打）" },
       { l:"B", t:"鋼琴輕聲彈奏的旋律（緩慢細膩）" },
@@ -478,6 +483,7 @@ const Qs = [
   },
   {
     q: "當你遇到「創作瓶頸」時，你的反應通常是？",
+    img: "img/Q4.png",
     key: true,
     opts: [
       { l:"A", t:"回頭檢視基礎，從素描或骨架重新練起" },
@@ -487,6 +493,7 @@ const Qs = [
   },
   {
     q: "你希望別人看完你的作品後，第一反應是？",
+    img: "img/Q5.png",
     opts: [
       { l:"A", t:"「這基本功太紮實了，專業！」" },
       { l:"B", t:"「這張圖看著心裡酸酸的（或暖暖的），很有感觸。」" },
@@ -497,7 +504,7 @@ const Qs = [
 
 const Results = {
   classic: {
-    emoji:"🍖", name:"經典肉粽",
+    img:"img/肉粽.png", emoji:"🍖", name:"經典肉粽",
     tagline:"基本功是你的秘密武器",
     label:"理性 · 紮實 · 傳統",
     labelStyle:"background:#E6F1FB;color:#0C447C;border:1px solid #B5D4F4;",
@@ -505,7 +512,7 @@ const Results = {
     desc:"你的創作像一顆完美紮實的肉粽——每一層都有它存在的理由。你相信紮實的基礎才能托起一切，寧可慢工出細活，也不願打馬虎眼。欣賞你的人，都佩服你那份沉穩與專業。時間站在你這邊。"
   },
   luxe: {
-    emoji:"🌟", name:"豪華八寶粽",
+    img:"img/八寶粽.png", emoji:"🌟", name:"豪華八寶粽",
     tagline:"細節才是你的主場",
     label:"理性 · 細節 · 繁複",
     labelStyle:"background:#E6F1FB;color:#0C447C;border:1px solid #B5D4F4;",
@@ -513,7 +520,7 @@ const Results = {
     desc:"你不只是理性，你還愛在細節裡做文章。作品裡總藏著只有懂的人才看得出的彩蛋，就像八寶粽裡暗藏的栗子與香菇。複雜度是你的語言，豐富感是你的簽名。"
   },
   sweet: {
-    emoji:"🫘", name:"甜心豆沙粽",
+    img:"img/豆沙粽.png", emoji:"🫘", name:"甜心豆沙粽",
     tagline:"情感共鳴是你最強的創作語言",
     label:"感性 · 情緒 · 療癒",
     labelStyle:"background:#E1F5EE;color:#085041;border:1px solid #9FE1CB;",
@@ -521,7 +528,7 @@ const Results = {
     desc:"你的畫會說話，而且說的是最容易觸動人心的那種話。你用情緒作畫，觀眾看完之後往往沉默幾秒才能反應——因為那張圖剛好戳到了什麼。豆沙的甜，恰到好處，不膩。"
   },
   lye: {
-    emoji:"🌿", name:"清香鹼水粽",
+    img:"img/鹼水粽.png", emoji:"🌿", name:"清香鹼水粽",
     tagline:"留白，才是你最有力的筆觸",
     label:"感性 · 極簡 · 意境",
     labelStyle:"background:#EAF3DE;color:#27500A;border:1px solid #C0DD97;",
@@ -529,7 +536,7 @@ const Results = {
     desc:"你懂得「少即是多」的哲學。畫面不需要塞滿，一條線、一片空白，就能讓人感受到風的方向。你的靈感來自山林與靜默，作品散發著一種沉靜的自信。"
   },
   crystal: {
-    emoji:"✨", name:"晶瑩水晶粽",
+    img:"img/水晶粽.png", emoji:"✨", name:"晶瑩水晶粽",
     tagline:"你天生就是用來打破規則的",
     label:"創新 · 視覺 · 潮流",
     labelStyle:"background:#FAEEDA;color:#633806;border:1px solid #FAC775;",
@@ -576,6 +583,7 @@ function render() {
       <span class="q-num">Q${cur+1}</span>
       ${q.key ? '<span class="q-key-badge">關鍵題</span>' : ''}
     </div>
+    ${q.img ? `<img class="q-img" src="${q.img}" alt="Q${cur+1}">` : ''}
     <div class="q-text">${q.q}</div>
     <div class="options">
       ${q.opts.map(o => `
@@ -618,6 +626,7 @@ function showResult() {
   const r = Results[key];
   const a = count("A"), b = count("B"), c = count("C");
   document.getElementById('result-hero').innerHTML = `
+    ${r.img ? `<img class="result-img" src="${r.img}" alt="${r.name}">` : ''}
     <span class="result-emoji">${r.emoji}</span>
     <span class="result-type" style="${r.labelStyle}">${r.label}</span>
     <div class="result-name">${r.name}</div>
