@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>粽說紛紜｜KrenzArtwork 端午節創作者靈魂測驗</title>
+<meta name="description" content="6題測驗，測出你的創作靈魂粽子！">
+<meta property="og:title" content="粽說紛紜｜你是哪種粽子？">
+<meta property="og:description" content="6題測驗，測出你的創作靈魂！">
+<meta property="og:type" content="website">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --purple-50: #EEEDFE;
+    --purple-100: #CECBF6;
+    --purple-400: #7F77DD;
+    --purple-600: #534AB7;
+    --purple-800: #3C3489;
+    --teal-50: #E1F5EE;
+    --teal-800: #085041;
+    --amber-50: #FAEEDA;
+    --amber-400: #BA7517;
+    --amber-800: #633806;
+    --gray-50: #F1EFE8;
+    --gray-100: #D3D1C7;
+    --gray-400: #888780;
+    --gray-600: #5F5E5A;
+    --gray-800: #444441;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC",
+      "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    background: #E8E4DC;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 16px 60px;
+  }
+
+  .phone-frame {
+    width: 390px;
+    min-height: 780px;
+    background: #fff;
+    border-radius: 48px;
+    border: 10px solid #1a1a1a;
+    box-shadow: 0 0 0 2px #444, 0 32px 64px rgba(0,0,0,.28), inset 0 0 0 2px #333;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .phone-notch {
+    width: 120px;
+    height: 30px;
+    background: #1a1a1a;
+    border-radius: 0 0 20px 20px;
+    margin: 0 auto;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+  }
+
+  .phone-screen {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 0 32px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .phone-screen::-webkit-scrollbar { display: none; }
+
+  /* ── LANG SELECT ── */
+  .lang-view {
+    text-align: center;
+    padding: 48px 24px 32px;
+    background: linear-gradient(160deg, #EEEDFE 0%, #fff 60%);
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .lang-emoji { font-size: 52px; display: block; margin-bottom: 16px; }
+  .lang-title { font-size: 22px; font-weight: 800; color: #111; margin-bottom: 8px; }
+  .lang-sub { font-size: 13px; color: var(--gray-600); margin-bottom: 36px; line-height: 1.6; }
+  .lang-btns { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+  .lang-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: 1.5px solid #E8E6E0;
+    background: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .18s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .lang-btn:hover { border-color: var(--purple-400); background: var(--purple-50); color: var(--purple-800); }
+  .lang-btn.active { border-color: var(--purple-400); background: var(--purple-400); color: #fff; }
+
+  /* ── HERO ── */
+  .hero {
+    text-align: center;
+    padding: 28px 24px 24px;
+    background: linear-gradient(160deg, #EEEDFE 0%, #fff 60%);
+  }
+  .hero-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    background: var(--purple-50);
+    color: var(--purple-800);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+    border: 1px solid var(--purple-100);
+  }
+  .hero-img { width: 100%; border-radius: var(--radius-md); margin-bottom: 14px; display: block; }
+  .hero h1 { font-size: 24px; font-weight: 800; line-height: 1.25; color: #111; margin-bottom: 8px; }
+  .hero p { font-size: 13px; color: var(--gray-600); line-height: 1.7; margin-bottom: 24px; }
+  .start-btn {
+    display: inline-block;
+    width: 100%;
+    padding: 15px;
+    background: var(--purple-400);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    border: none;
+    transition: background .2s, transform .1s;
+  }
+  .start-btn:hover { background: var(--purple-600); }
+  .start-btn:active { transform: scale(.97); }
+
+  /* ── QUIZ ── */
+  .quiz-wrap { padding: 20px 20px 0; }
+  .progress-wrap { margin-bottom: 20px; }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--gray-400);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .progress-track { height: 5px; background: var(--gray-100); border-radius: 3px; overflow: hidden; }
+  .progress-fill {
+    height: 100%;
+    background: var(--purple-400);
+    border-radius: 3px;
+    transition: width .4s cubic-bezier(.4,0,.2,1);
+  }
+
+  .q-header { display: flex; align-items: center; gap: 7px; margin-bottom: 10px; }
+  .q-num {
+    font-size: 11px; font-weight: 700;
+    background: var(--purple-50); color: var(--purple-800);
+    padding: 3px 10px; border-radius: 20px; border: 1px solid var(--purple-100);
+  }
+  .q-key-badge {
+    font-size: 10px; font-weight: 600;
+    background: var(--amber-50); color: var(--amber-800);
+    padding: 3px 9px; border-radius: 20px; border: 1px solid #FAC775;
+  }
+  .q-img { width: 100%; border-radius: var(--radius-md); margin-bottom: 12px; display: block; }
+  .q-text { font-size: 15px; font-weight: 700; line-height: 1.5; color: #111; margin-bottom: 14px; }
+
+  .options { display: flex; flex-direction: column; gap: 9px; }
+  .opt {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 13px 14px;
+    border: 1.5px solid #E8E6E0; border-radius: var(--radius-md);
+    background: #fff; cursor: pointer; text-align: left;
+    transition: border-color .15s, background .15s; width: 100%;
+  }
+  .opt:hover { border-color: var(--purple-400); background: var(--purple-50); }
+  .opt.selected { border-color: var(--purple-400); background: var(--purple-50); }
+  .opt-label {
+    font-size: 12px; font-weight: 800; color: var(--purple-800);
+    background: var(--purple-100); border-radius: 6px;
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .opt.selected .opt-label { background: var(--purple-400); color: #fff; }
+  .opt-text { font-size: 13px; line-height: 1.6; color: #333; padding-top: 2px; }
+
+  .nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 20px; padding-bottom: 8px;
+  }
+  .nav-btn {
+    padding: 10px 18px; border-radius: var(--radius-sm);
+    border: 1.5px solid #E8E6E0; background: #fff;
+    font-size: 13px; font-weight: 600; cursor: pointer; color: #444;
+    transition: background .15s;
+  }
+  .nav-btn:hover { background: var(--gray-50); }
+  .nav-btn:disabled { opacity: .3; cursor: not-allowed; }
+  .nav-btn.primary { background: var(--purple-400); color: #fff; border-color: var(--purple-400); }
+  .nav-btn.primary:hover { background: var(--purple-600); border-color: var(--purple-600); }
+  .nav-btn.primary:disabled { opacity: .35; }
+  .nav-counter { font-size: 12px; color: var(--gray-400); font-weight: 600; }
+
+  /* ── RESULT ── */
+  .result-wrap { padding: 20px 20px 0; }
+  .result-hero {
+    text-align: center; padding: 12px 0 20px;
+    border-bottom: 1px solid #F0EDE8; margin-bottom: 20px;
+  }
+  .result-img { width: 100%; border-radius: var(--radius-md); margin-bottom: 12px; display: block; }
+  .result-type {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    padding: 4px 12px; border-radius: 20px; margin-bottom: 8px; letter-spacing: .04em;
+  }
+  .result-name { font-size: 24px; font-weight: 800; color: #111; margin-bottom: 5px; }
+  .result-tagline { font-size: 13px; color: var(--gray-600); line-height: 1.6; }
+
+  .score-row { display: flex; gap: 7px; margin-bottom: 16px; flex-wrap: wrap; }
+  .score-pill { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
+  .score-a { background: #E6F1FB; color: #0C447C; }
+  .score-b { background: var(--teal-50); color: var(--teal-800); }
+  .score-c { background: var(--amber-50); color: var(--amber-800); }
+
+  .result-tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 14px; }
+  .tag-ssr { background: #FFF3CD; color: #856404; border: 1px solid #FFDA6A; }
+  .tag-chaos { background: #FFE5E5; color: #8B0000; border: 1px solid #FFB3B3; }
+  .tag-normal { background: var(--purple-50); color: var(--purple-800); border: 1px solid var(--purple-100); }
+
+  .traits { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+  .trait {
+    font-size: 11px; font-weight: 600; padding: 4px 11px; border-radius: 20px;
+    background: var(--gray-50); color: var(--gray-800); border: 1px solid var(--gray-100);
+  }
+  .result-desc {
+    font-size: 13px; line-height: 1.8; color: #444;
+    background: var(--gray-50); border-radius: var(--radius-sm);
+    padding: 14px; margin-bottom: 20px; border-left: 3px solid var(--purple-400);
+  }
+  .result-actions { display: flex; flex-direction: column; gap: 9px; }
+  .share-btn {
+    width: 100%; padding: 14px; background: var(--purple-400); color: #fff;
+    font-size: 14px; font-weight: 700; border: none; border-radius: var(--radius-md);
+    cursor: pointer; transition: background .2s;
+  }
+  .share-btn:hover { background: var(--purple-600); }
+  .retry-btn {
+    width: 100%; padding: 11px; background: #fff; color: var(--gray-600);
+    font-size: 13px; font-weight: 600; border: 1.5px solid #E8E6E0;
+    border-radius: var(--radius-md); cursor: pointer; transition: background .15s;
+  }
+  .retry-btn:hover { background: var(--gray-50); }
+
+  .phone-footer { text-align: center; font-size: 11px; color: var(--gray-400); padding: 16px 0 8px; border-top: 1px solid #F0EDE8; margin: 20px 0 0; }
+
+  .home-bar { height: 28px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .home-bar-pill { width: 120px; height: 5px; background: #1a1a1a; border-radius: 3px; opacity: .15; }
+
+  .toast {
+    position: fixed; bottom: 32px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #222; color: #fff; font-size: 13px; font-weight: 500;
+    padding: 10px 20px; border-radius: var(--radius-md);
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s, transform .25s; white-space: nowrap; z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .hidden { display: none !important; }
+
+  @media (max-width: 480px) {
+    body { background: #FAF9F6; padding: 0; align-items: stretch; }
+    .phone-frame {
+      width: 100%; min-height: 100vh; border-radius: 0;
+      border: none; box-shadow: none; overflow: visible;
+    }
+    .phone-notch { display: none; }
+    .home-bar { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="phone-notch"></div>
+  <div class="phone-screen">
+
+    <!-- 語言選擇 -->
+    <div id="lang-view">
+      <div class="lang-view">
+        <span class="lang-emoji">🎋</span>
+        <div class="lang-title">粽說紛紜</div>
+        <div class="lang-sub">KrenzArtwork 端午節創作者靈魂測驗<br>請選擇語言 / 请选择语言</div>
+        <div class="lang-btns">
+          <button class="lang-btn" onclick="setLang('TW')">繁體中文</button>
+          <button class="lang-btn" onclick="setLang('CN')">简体中文</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <section id="hero-view" class="hidden">
+      <div class="hero">
+        <span class="hero-badge" id="hero-badge">🎋 端午節創作靈魂測驗</span>
+        <img class="hero-img" src="img/封面.png" alt="粽說紛紜封面">
+        <h1 id="hero-title">粽說紛紜</h1>
+        <p id="hero-desc">你的畫畫習慣，適合哪一種粽子？<br>6 道題，測出你的創作靈魂。</p>
+        <button class="start-btn" onclick="startQuiz()" id="hero-btn">開始測驗</button>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <div class="quiz-wrap hidden" id="quiz-view">
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span id="prog-label">第 1 題，共 6 題</span>
+          <span id="prog-pct">17%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="prog-fill" style="width:17%"></div>
+        </div>
+      </div>
+      <div id="q-area"></div>
+      <div class="nav">
+        <button class="nav-btn" id="prev-btn" onclick="goPrev()">← <span id="prev-label">上一題</span></button>
+        <span class="nav-counter" id="nav-counter">1 / 6</span>
+        <button class="nav-btn primary" id="next-btn" onclick="goNext()" disabled><span id="next-label">下一題</span> →</button>
+      </div>
+      <div class="phone-footer">粽說紛紜 · KrenzArtwork 端午節特別企劃</div>
+    </div>
+
+    <!-- RESULT -->
+    <div class="result-wrap hidden" id="result-view">
+      <div class="result-hero" id="result-hero"></div>
+      <div class="score-row" id="score-row"></div>
+      <div class="traits" id="result-traits"></div>
+      <div class="result-desc" id="result-desc"></div>
+      <div class="result-actions">
+        <button class="share-btn" id="share-btn" onclick="shareResult()">分享我的結果</button>
+        <button class="retry-btn" onclick="restart()" id="retry-btn">↺ 再測一次</button>
+      </div>
+      <div class="phone-footer">粽說紛紜 · KrenzArtwork 端午節特別企劃</div>
+    </div>
+
+  </div>
+  <div class="home-bar"><div class="home-bar-pill"></div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let lang = 'TW';
+let cur = 0;
+let answers = Array(6).fill(null);
+
+// ── 題目資料 ──
+const QsTW = [
+  {
+    q: "開始新案子之前，你的第一步是？",
+    img: "img/Q1.png",
+    opts: [
+      { l:"A", t:"列清單、找參考、整理出明確的創作方向" },
+      { l:"B", t:"先隨手畫幾張，等感覺到位再說" },
+      { l:"C", t:"打開社群刷三小時，說是在找靈感" }
+    ]
+  },
+  {
+    q: "你的草稿本長什麼樣子？",
+    img: "img/Q2.png",
+    opts: [
+      { l:"A", t:"整齊標注、分頁分類，找東西一秒到位" },
+      { l:"B", t:"滿滿的隨筆塗鴉，只有我看得懂" },
+      { l:"C", t:"什麼草稿本，我都畫在便利貼上" }
+    ]
+  },
+  {
+    q: "畫到一半卡關，你通常怎麼辦？",
+    img: "img/Q3.png",
+    opts: [
+      { l:"A", t:"重新檢視構圖與骨架，找出問題所在" },
+      { l:"B", t:"先去走走，等靈感自己出現" },
+      { l:"C", t:"直接存檔放棄，下次再說（就沒有下次）" }
+    ]
+  },
+  {
+    q: "你的作品裡，最不願意妥協的是？",
+    img: "img/Q4.png",
+    key: true,
+    opts: [
+      { l:"A", t:"透視、比例、結構——基本功就是一切" },
+      { l:"B", t:"畫面的情緒與故事，感受到了才算完成" },
+      { l:"C", t:"我連完稿都沒有，談什麼不妥協" }
+    ]
+  },
+  {
+    q: "你的創作流程聽起來像什麼聲音？",
+    img: "img/Q5.png",
+    opts: [
+      { l:"A", t:"精密齒輪咬合聲，每一步都有邏輯" },
+      { l:"B", t:"鋼琴緩慢演奏，隨情緒起伏前進" },
+      { l:"C", t:"施工現場，一片混亂但最後還是蓋好了" }
+    ]
+  },
+  {
+    q: "你希望看到你作品的人，第一眼有什麼感受？",
+    img: "img/Q6.png" ,
+    opts: [
+      { l:"A", t:"「這基本功也太紮實了，超專業！」" },
+      { l:"B", t:"「這張圖莫名讓我有點想哭，不知道為什麼」" },
+      { l:"C", t:"「這個人到底在想什麼？（正面意思）」" }
+    ]
+  }
+];
+
+const QsCN = [
+  {
+    q: "开始新项目之前，你的第一步是？",
+    img: "img/Q1.png",
+    opts: [
+      { l:"A", t:"列清单、找参考、整理出明确的创作方向" },
+      { l:"B", t:"先随手画几张，等感觉到位再说" },
+      { l:"C", t:"打开社交媒体刷三小时，说是在找灵感" }
+    ]
+  },
+  {
+    q: "你的草稿本长什么样？",
+    img: "img/Q2.png",
+    opts: [
+      { l:"A", t:"整齐标注、分页分类，找东西一秒到位" },
+      { l:"B", t:"满满的随笔涂鸦，只有我看得懂" },
+      { l:"C", t:"什么草稿本，我都画在便利贴上" }
+    ]
+  },
+  {
+    q: "画到一半卡壳了，你通常怎么办？",
+    img: "img/Q3.png",
+    opts: [
+      { l:"A", t:"重新检视构图与骨架，找出问题所在" },
+      { l:"B", t:"先去走走，等灵感自己出现" },
+      { l:"C", t:"直接存档放弃，下次再说（就没有下次）" }
+    ]
+  },
+  {
+    q: "你的作品里，最不愿意妥协的是？",
+    img: "img/Q4.png",
+    key: true,
+    opts: [
+      { l:"A", t:"透视、比例、结构——基本功就是一切" },
+      { l:"B", t:"画面的情绪与故事，感受到了才算完成" },
+      { l:"C", t:"我连完稿都没有，谈什么不妥协" }
+    ]
+  },
+  {
+    q: "你的创作流程听起来像什么声音？",
+    img: "img/Q5.png",
+    opts: [
+      { l:"A", t:"精密齿轮咬合声，每一步都有逻辑" },
+      { l:"B", t:"钢琴缓慢演奏，随情绪起伏前进" },
+      { l:"C", t:"施工现场，一片混乱但最后还是盖好了" }
+    ]
+  },
+  {
+    q: "你希望看到你作品的人，第一眼有什么感受？",
+    img: "img/Q6.png",
+    opts: [
+      { l:"A", t:"「这基本功也太扎实了，超专业！」" },
+      { l:"B", t:"「这张图莫名让我有点想哭，不知道为什么」" },
+      { l:"C", t:"「这个人到底在想什么？（正面意思）」" }
+    ]
+  }
+];
+
+// ── 結果資料 ──
+const Results = {
+  // 正常版
+  classic: {
+    img:"img/肉粽.png",
+    tw:{ name:"經典肉粽", label:"理性 · 紮實 · 傳統", tagline:"基本功是你最強的武器", traits:["結構清晰","按部就班","細節控","值得信賴"], desc:"你的創作像一顆完美紮實的肉粽——每一層都有它存在的理由。你相信紮實的基礎才能托起一切，寧可慢工出細活，也不願打馬虎眼。欣賞你的人，都折服於那份沉穩與專業。時間永遠站在你這邊。" },
+    cn:{ name:"经典肉粽", label:"理性 · 扎实 · 传统", tagline:"基本功是你最强的武器", traits:["结构清晰","按部就班","细节控","值得信赖"], desc:"你的创作像一颗完美扎实的肉粽——每一层都有它存在的理由。你相信扎实的基础才能托起一切，宁可慢工出细活，也不愿打马虎眼。欣赏你的人，都折服于那份沉稳与专业。时间永远站在你这边。" },
+    labelStyle:"background:#E6F1FB;color:#0C447C;border:1px solid #B5D4F4;",
+    tag:"normal"
+  },
+  luxe: {
+    img:"img/八寶粽.png",
+    tw:{ name:"豪華八寶粽", label:"理性 · 細節 · 繁複", tagline:"細節才是你真正的主場", traits:["精益求精","層次豐富","完美主義","驚喜感"], desc:"你不只是理性，你還愛在細節裡做文章。作品裡藏著只有懂的人才看得出的驚喜，就像八寶粽裡暗藏的栗子與香菇。複雜是你的語言，豐富是你的簽名。甲方每次打開你的檔案都會多長一根白頭髮，但最後都心服口服。" },
+    cn:{ name:"豪华八宝粽", label:"理性 · 细节 · 繁复", tagline:"细节才是你真正的主场", traits:["精益求精","层次丰富","完美主义","惊喜感"], desc:"你不只是理性，你还爱在细节里做文章。作品里藏着只有懂的人才看得出的惊喜，就像八宝粽里暗藏的栗子与香菇。复杂是你的语言，丰富是你的签名。甲方每次打开你的文件都会多长一根白头发，但最后都心服口服。" },
+    labelStyle:"background:#E6F1FB;color:#0C447C;border:1px solid #B5D4F4;",
+    tag:"normal"
+  },
+  sweet: {
+    img:"img/豆沙粽.png",
+    tw:{ name:"甜心豆沙粽", label:"感性 · 情緒 · 療癒", tagline:"情感共鳴是你最強的創作語言", traits:["感情豐沛","溫暖細膩","故事性強","治癒系"], desc:"你的畫會說話，而且說的是最容易觸動人心的那種話。你用情緒作畫，觀眾看完之後往往沉默幾秒才能反應——因為那張圖剛好戳到了什麼。豆沙的甜，恰到好處，不膩。別人問你怎麼做到的，你只能說「有感覺就畫了」。" },
+    cn:{ name:"甜心豆沙粽", label:"感性 · 情绪 · 治愈", tagline:"情感共鸣是你最强的创作语言", traits:["感情丰沛","温暖细腻","故事性强","治愈系"], desc:"你的画会说话，而且说的是最容易触动人心的那种话。你用情绪作画，观众看完之后往往沉默几秒才能反应——因为那张图刚好戳到了什么。豆沙的甜，恰到好处，不腻。别人问你怎么做到的，你只能说「有感觉就画了」。" },
+    labelStyle:"background:#E1F5EE;color:#085041;border:1px solid #9FE1CB;",
+    tag:"normal"
+  },
+  lye: {
+    img:"img/鹼水粽.png",
+    tw:{ name:"清香鹼水粽", label:"感性 · 極簡 · 意境", tagline:"留白，才是你最有力的筆觸", traits:["意境深遠","極簡主義","禪感十足","留白美學"], desc:"你懂得「少即是多」的哲學。畫面不需要塞滿，一條線、一片空白，就能讓人感受到風的方向。你的靈感來自山林與靜默，作品散發著一種沉靜的自信。別人說你的作品「看不太懂」，你知道那是因為他們還沒靜下來。" },
+    cn:{ name:"清香碱水粽", label:"感性 · 极简 · 意境", tagline:"留白，才是你最有力的笔触", traits:["意境深远","极简主义","禅感十足","留白美学"], desc:"你懂得「少即是多」的哲学。画面不需要塞满，一条线、一片空白，就能让人感受到风的方向。你的灵感来自山林与静默，作品散发着一种沉静的自信。别人说你的作品「看不太懂」，你知道那是因为他们还没静下来。" },
+    labelStyle:"background:#EAF3DE;color:#27500A;border:1px solid #C0DD97;",
+    tag:"normal"
+  },
+  crystal: {
+    img:"img/水晶粽.png",
+    tw:{ name:"晶瑩水晶粽", label:"創新 · 視覺 · 潮流", tagline:"你天生就是用來打破規則的", traits:["前衛大膽","視覺衝擊","趨勢敏感","實驗精神"], desc:"你最不甘於現狀。別人走的路你往往繞道，最新的技術、最前衛的視覺語言都是你的玩具。你的作品讓人第一眼就想截圖——不管看不看得懂，先說「好酷」再說。五年後大家都在學你的風格，你早已往更遠的地方走了。" },
+    cn:{ name:"晶莹水晶粽", label:"创新 · 视觉 · 潮流", tagline:"你天生就是用来打破规则的", traits:["前卫大胆","视觉冲击","趋势敏感","实验精神"], desc:"你最不甘于现状。别人走的路你往往绕道，最新的技术、最前卫的视觉语言都是你的玩具。你的作品让人第一眼就想截图——不管看不看得懂，先说「好酷」再说。五年后大家都在学你的风格，你早已往更远的地方走了。" },
+    labelStyle:"background:#FAEEDA;color:#633806;border:1px solid #FAC775;",
+    tag:"normal"
+  },
+  // SSR
+  ssr: {
+    img:"img/黃金粽.png",
+    tw:{ name:"SSR 黃金萬兩粽", label:"神級 · 名利雙收 · 甲方收割機", tagline:"恭喜！你抽到了傳說中的神級粽", traits:["財運滾滾","甲方摯愛","人生勝利組","限定爆率10%"], desc:"恭喜你觸發了神秘的歐氣機制！黃金萬兩粽代表你的創作兼顧理性與感性，同時還帶著一股難以言喻的魅力——甲方見了主動加預算，粉絲見了自動衝流量。這款粽子世間罕見，就跟你一樣。" },
+    cn:{ name:"SSR 黄金万两粽", label:"神级 · 名利双收 · 甲方收割机", tagline:"恭喜！你抽到了传说中的神级粽", traits:["财运滚滚","甲方挚爱","人生赢家","限定爆率10%"], desc:"恭喜你触发了神秘的欧气机制！黄金万两粽代表你的创作兼顾理性与感性，同时还带着一股难以言喻的魅力——甲方见了主动加预算，粉丝见了自动冲流量。这款粽子世间罕见，就跟你一样。" },
+    labelStyle:"background:#FFF3CD;color:#856404;border:1px solid #FFDA6A;",
+    tag:"ssr"
+  },
+  // TW 獵奇
+  tw_zhongbu: {
+    img:"img/中部粽.png",
+    tw:{ name:"中部粽", label:"硬派 · 寫實 · 消波塊美學", tagline:"你的創作跟消波塊一樣——醜得很有個性", traits:["硬派寫實","拒絕裝飾","反精緻化","意外耐看"], desc:"你的創作風格就像中部粽——沒有南部的精緻、沒有北部的豪氣，但它就是它，方方正正擺在那裡，任你品評。消波塊也是一種美學，不是每個人都能欣賞，但懂的人超懂。你的受眾小而精，忠誠度破表。" },
+    cn:{ name:"中部粽（台湾特产）", label:"硬派 · 写实 · 消波块美学", tagline:"你的创作跟消波块一样——丑得很有个性", traits:["硬派写实","拒绝装饰","反精致化","意外耐看"], desc:"你的创作风格就像台湾中部粽——没有南部的精致、没有北部的豪气，但它就是它，方方正正摆在那里，任你品评。消波块也是一种美学，不是每个人都能欣赏，但懂的人超懂。你的受众小而精，忠诚度破表。" },
+    labelStyle:"background:#FFE5E5;color:#8B0000;border:1px solid #FFB3B3;",
+    tag:"chaos"
+  },
+  tw_cinavu: {
+    img:"img/吉拿夫.png",
+    tw:{ name:"吉拿夫", label:"自然 · 原始 · 部落美學", tagline:"你的創作根植於土地，野生又真實", traits:["原始衝擊","拒絕主流","自然系","看不懂但很屌"], desc:"吉拿夫是原住民族的傳統美食，用月桃葉包裹，帶著山林的氣息。你的創作也是如此——不走主流審美，不迎合市場，卻有一種讓人停下腳步的原始力量。你可能紅不了，但你的作品一百年後會被人拿去辦展。" },
+    cn:{ name:"吉拿夫（台湾原住民粽）", label:"自然 · 原始 · 部落美学", tagline:"你的创作根植于土地，野生又真实", traits:["原始冲击","拒绝主流","自然系","看不懂但很屌"], desc:"吉拿夫是台湾原住民族的传统美食，用月桃叶包裹，带着山林的气息。你的创作也是如此——不走主流审美，不迎合市场，却有一种让人停下脚步的原始力量。你可能红不了，但你的作品一百年后会被人拿去办展。" },
+    labelStyle:"background:#FFE5E5;color:#8B0000;border:1px solid #FFB3B3;",
+    tag:"chaos"
+  },
+  tw_3d: {
+    img:"img/3D油飯.png",
+    tw:{ name:"3D油飯", label:"包裝大師 · 形式大於內容", tagline:"你的作品，一半是創作一半是行銷", traits:["視覺先行","包裝專家","形式即內容","讓人先買再說"], desc:"3D油飯是把油飯包成粽子形狀的發明——本質不變，但形式讓人耳目一新。你的創作也有這種特質：你懂得讓作品「看起來很厲害」，封面設計、縮圖構圖、標題下法都是你的武器。不管內容如何，先讓人點進來再說。" },
+    cn:{ name:"3D油饭（台湾特色）", label:"包装大师 · 形式大于内容", tagline:"你的作品，一半是创作一半是营销", traits:["视觉先行","包装专家","形式即内容","让人先买再说"], desc:"3D油饭是把油饭包成粽子形状的发明——本质不变，但形式让人耳目一新。你的创作也有这种特质：你懂得让作品「看起来很厉害」，封面设计、缩图构图、标题下法都是你的武器。不管内容如何，先让人点进来再说。" },
+    labelStyle:"background:#FFE5E5;color:#8B0000;border:1px solid #FFB3B3;",
+    tag:"chaos"
+  },
+  // CN 獵奇
+  cn_luosifen: {
+    img:"img/螺螄粉粽.png",
+    tw:{ name:"螺螄粉粽", label:"靈魂重口味 · 愛我者留", tagline:"你的創作，不是每個人都受得了，但愛的人超愛", traits:["重口獨特","polarizing","死忠粉絲","臭得有型"], desc:"螺螄粉粽結合了最臭與最香的兩種極端，不接受中間路線。你的創作風格也如此——強烈、直接、毫不妥協，有人看了皺眉，有人看了上癮。你的粉絲不多，但每一個都是真愛。這種創作者最後往往走得最遠。" },
+    cn:{ name:"螺蛳粉粽", label:"灵魂重口味 · 爱我者留", tagline:"你的创作，不是每个人都受得了，但爱的人超爱", traits:["重口独特","两极分化","死忠粉丝","臭得有型"], desc:"螺蛳粉粽结合了最臭与最香的两种极端，不接受中间路线。你的创作风格也如此——强烈、直接、毫不妥协，有人看了皱眉，有人看了上瘾。你的粉丝不多，但每一个都是真爱。这种创作者最后往往走得最远。" },
+    labelStyle:"background:#FFE5E5;color:#8B0000;border:1px solid #FFB3B3;",
+    tag:"chaos"
+  },
+  cn_latiao: {
+    img:"img/辣條粽.png",
+    tw:{ name:"辣條粽", label:"混亂 · 潮流 · 反叛精神", tagline:"你的創作是一場混亂的盛宴，但就是好看", traits:["混亂美學","街頭感","反精緻","上頭"], desc:"辣條粽不在任何正規食譜裡，但它就是存在，而且有人愛。你的創作也有這種任性——不按牌理出牌，風格混搭，有時候連你自己都不知道下一步要去哪，但結果往往出乎意料地精彩。這就是混亂的力量。" },
+    cn:{ name:"辣条粽", label:"混乱 · 潮流 · 反叛精神", tagline:"你的创作是一场混乱的盛宴，但就是好看", traits:["混乱美学","街头感","反精致","上头"], desc:"辣条粽不在任何正规食谱里，但它就是存在，而且有人爱。你的创作也有这种任性——不按牌理出牌，风格混搭，有时候连你自己都不知道下一步要去哪，但结果往往出乎意料地精彩。这就是混乱的力量。" },
+    labelStyle:"background:#FFE5E5;color:#8B0000;border:1px solid #FFB3B3;",
+    tag:"chaos"
+  },
+  cn_durian: {
+    img:"img/榴槤粽.png",
+    tw:{ name:"榴槤冰粽", label:"孤高 · 藝術家 · 不被理解的天才", tagline:"你的作品超越了這個時代，只是大家還不知道", traits:["孤高自賞","非主流","藝術家魂","五十年後再說"], desc:"榴槤冰粽把世界上氣味最兩極的食材組合在一起，需要極度開放的心態才能接受。你的創作也在挑戰人們的感知邊界——不舒服是必要的，衝突是手段，讓人久久無法忘懷才是目的。孤高不是孤獨，是等待懂你的人。" },
+    cn:{ name:"榴莲冰粽", label:"孤高 · 艺术家 · 不被理解的天才", tagline:"你的作品超越了这个时代，只是大家还不知道", traits:["孤高自赏","非主流","艺术家魂","五十年后再说"], desc:"榴莲冰粽把世界上气味最两极的食材组合在一起，需要极度开放的心态才能接受。你的创作也在挑战人们的感知边界——不舒服是必要的，冲突是手段，让人久久无法忘怀才是目的。孤高不是孤独，是等待懂你的人。" },
+    labelStyle:"background:#FFE5E5;color:#8B0000;border:1px solid #FFB3B3;",
+    tag:"chaos"
+  }
+};
+
+// ── 語言設定 ──
+function setLang(l) {
+  lang = l;
+  document.getElementById('lang-view').classList.add('hidden');
+  document.getElementById('hero-view').classList.remove('hidden');
+  if (lang === 'CN') {
+    document.getElementById('hero-badge').textContent = '🎋 端午节创作灵魂测验';
+    document.getElementById('hero-title').textContent = '粽说纷纭';
+    document.getElementById('hero-desc').textContent = '你的画画习惯，适合哪一种粽子？\n6道题，测出你的创作灵魂。';
+    document.getElementById('hero-btn').textContent = '开始测验';
+  }
+}
+
+function getQs() { return lang === 'CN' ? QsCN : QsTW; }
+
+// ── 判定邏輯 ──
+function getResult() {
+  const Qs = getQs();
+  const cCount = answers.filter(a => a === 'C').length;
+  const allSame = answers.every(a => a === answers[0]);
+
+  // 第一優先：混沌機制
+  if (cCount >= 4 || allSame) {
+    if (lang === 'TW') {
+      const pool = ['tw_zhongbu', 'tw_cinavu', 'tw_3d'];
+      return pool[Math.floor(Math.random() * pool.length)];
+    } else {
+      const pool = ['cn_luosifen', 'cn_latiao', 'cn_durian'];
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+  }
+
+  // 第二優先：SSR 10%
+  if (Math.random() < 0.1) return 'ssr';
+
+  // 第三優先：正常計分
+  const aCount = answers.filter(a => a === 'A').length;
+  const bCount = answers.filter(a => a === 'B').length;
+  const q4 = answers[3];
+
+  if (aCount > bCount) { return q4 === 'A' ? 'classic' : 'luxe'; }
+  if (bCount > aCount) { return q4 === 'C' ? 'lye' : 'sweet'; }
+  // 平手用 Q6 決勝
+  const q6 = answers[5];
+  if (q6 === 'C') return 'crystal';
+  if (q6 === 'B') return 'sweet';
+  return 'classic';
+}
+
+// ── UI 控制 ──
+function startQuiz() {
+  document.getElementById('hero-view').classList.add('hidden');
+  document.getElementById('quiz-view').classList.remove('hidden');
+  render(); scrollTop();
+}
+
+function render() {
+  const Qs = getQs();
+  const q = Qs[cur];
+  const pct = Math.round((cur + 1) / 6 * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = lang === 'CN' ? `第 ${cur+1} 题，共 6 题` : `第 ${cur+1} 題，共 6 題`;
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('nav-counter').textContent = `${cur+1} / 6`;
+
+  const pb = document.getElementById('prev-btn');
+  pb.disabled = false;
+  document.getElementById('prev-label').textContent = cur === 0 ? (lang === 'CN' ? '回封面' : '回封面') : (lang === 'CN' ? '上一题' : '上一題');
+
+  const nb = document.getElementById('next-btn');
+  nb.disabled = answers[cur] === null;
+  document.getElementById('next-label').textContent = cur === 5 ? (lang === 'CN' ? '看结果' : '看結果') : (lang === 'CN' ? '下一题' : '下一題');
+
+  document.getElementById('q-area').innerHTML = `
+    <div class="q-header">
+      <span class="q-num">Q${cur+1}</span>
+      ${q.key ? `<span class="q-key-badge">${lang==='CN'?'关键题':'關鍵題'}</span>` : ''}
+    </div>
+    ${q.img ? `<img class="q-img" src="${q.img}" alt="Q${cur+1}">` : ''}
+    <div class="q-text">${q.q}</div>
+    <div class="options">
+      ${q.opts.map(o => `
+        <button class="opt${answers[cur]===o.l?' selected':''}" onclick="pick('${o.l}')">
+          <span class="opt-label">${o.l}</span>
+          <span class="opt-text">${o.t}</span>
+        </button>
+      `).join('')}
+    </div>
+  `;
+}
+
+function pick(v) {
+  answers[cur] = v;
+  document.querySelectorAll('.opt').forEach(el => {
+    el.classList.toggle('selected', el.querySelector('.opt-label').textContent === v);
+  });
+  document.getElementById('next-btn').disabled = false;
+  setTimeout(() => {
+    if (cur === 5) { showResult(); } else { cur++; render(); scrollTop(); }
+  }, 400);
+}
+
+function goPrev() {
+  if (cur === 0) {
+    document.getElementById('quiz-view').classList.add('hidden');
+    document.getElementById('hero-view').classList.remove('hidden');
+    cur = 0; answers = Array(6).fill(null);
+    scrollTop();
+  } else { cur--; render(); scrollTop(); }
+}
+
+function goNext() {
+  if (cur === 5) { showResult(); } else { cur++; render(); scrollTop(); }
+}
+
+function scrollTop() {
+  const screen = document.querySelector('.phone-screen');
+  if (screen) screen.scrollTo({ top: 0, behavior: 'smooth' });
+  else window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showResult() {
+  document.getElementById('quiz-view').classList.add('hidden');
+  document.getElementById('result-view').classList.remove('hidden');
+
+  const key = getResult();
+  const r = Results[key];
+  const d = lang === 'CN' ? r.cn : r.tw;
+  const aCount = answers.filter(a => a === 'A').length;
+  const bCount = answers.filter(a => a === 'B').length;
+  const cCount = answers.filter(a => a === 'C').length;
+
+  const tagMap = {
+    normal: lang === 'CN' ? '正常人格粽 🌿' : '正常人格粽 🌿',
+    ssr: '✨ SSR 神級爆率',
+    chaos: lang === 'CN' ? '🎲 混沌机制触发' : '🎲 混沌機制觸發'
+  };
+  const tagClass = { normal:'tag-normal', ssr:'tag-ssr', chaos:'tag-chaos' };
+
+  document.getElementById('result-hero').innerHTML = `
+    ${r.img ? `<img class="result-img" src="${r.img}" alt="${d.name}">` : ''}
+    <span class="result-tag ${tagClass[r.tag]}">${tagMap[r.tag]}</span>
+    <span class="result-type" style="${r.labelStyle}">${d.label}</span>
+    <div class="result-name">${d.name}</div>
+    <div class="result-tagline">${d.tagline}</div>
+  `;
+  document.getElementById('score-row').innerHTML = '';
+  document.getElementById('result-traits').innerHTML = d.traits.map(t => `<span class="trait">${t}</span>`).join('');
+  document.getElementById('result-desc').textContent = d.desc;
+
+  const shareBtn = document.getElementById('share-btn');
+  shareBtn.dataset.name = d.name;
+  shareBtn.dataset.tagline = d.tagline;
+  shareBtn.textContent = lang === 'CN' ? '分享我的结果' : '分享我的結果';
+  document.getElementById('retry-btn').textContent = lang === 'CN' ? '↺ 再测一次' : '↺ 再測一次';
+
+  scrollTop();
+  submitToNotion(key, d.name, aCount, bCount, cCount);
+}
+
+function submitToNotion(result_key, result_name, score_a, score_b, score_c) {
+  fetch('https://zongzi-notion-api.suian0701.workers.dev/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ result_key, result_name, score_a, score_b, score_c })
+  }).catch(() => {});
+}
+
+function shareResult() {
+  const btn = document.getElementById('share-btn');
+  const text = lang === 'CN'
+    ? `🎋【粽说纷纭】KrenzArtwork端午节创作者灵魂测验\n\n我的结果是：${btn.dataset.name}\n「${btn.dataset.tagline}」\n\n快来测测你是哪种粽子！\n#端午节 #粽说纷纭 #KrenzArtwork`
+    : `🎋【粽說紛紜】KrenzArtwork端午節創作者靈魂測驗\n\n我的結果是：${btn.dataset.name}\n「${btn.dataset.tagline}」\n\n快來測測你是哪種粽子！\n#端午節 #粽說紛紜 #KrenzArtwork`;
+  if (navigator.share) {
+    navigator.share({ text }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text)
+      .then(() => showToast(lang === 'CN' ? '已复制到剪贴板！' : '已複製到剪貼簿！'))
+      .catch(() => showToast(lang === 'CN' ? '请手动复制' : '請手動複製'));
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function restart() {
+  cur = 0; answers = Array(6).fill(null);
+  document.getElementById('result-view').classList.add('hidden');
+  document.getElementById('lang-view').classList.remove('hidden');
+  scrollTop();
+}
+</script>
+</body>
+</html>
