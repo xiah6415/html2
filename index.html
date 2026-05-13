@@ -664,7 +664,7 @@ function showResult() {
 }
 
 function submitToNotion(result_key, result_name, score_a, score_b, score_c) {
-  fetch('https://zongzi-notion-api.suian0701.workers.dev/', {
+  fetch('/submit', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ result_key, result_name, score_a, score_b, score_c })
