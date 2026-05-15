@@ -291,6 +291,7 @@
     .home-bar { display: none; }
   }
 </style>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "6c9f94c00b4847a8811dc8516ea7c24b"}'></script><!-- End Cloudflare Web Analytics -->
 </head>
 <body>
 
@@ -738,7 +739,7 @@ function showResult() {
 }
 
 function submitToNotion(result_key, result_name, score_a, score_b, score_c) {
-  fetch('https://zongzi-notion-api.suian0701.workers.dev/', {
+  fetch('/submit', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ result_key, result_name, score_a, score_b, score_c })
