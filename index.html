@@ -611,8 +611,8 @@ function getResult() {
     }
   }
 
-  // 第二優先：SSR 20%
-  if (Math.random() < 0.2) return 'ssr';
+  // 第二優先：SSR 1%
+  if (Math.random() < 0.01) return 'ssr';
 
   // 第三優先：正常計分
   const aCount = answers.filter(a => a === 'A').length;
