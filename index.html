@@ -258,6 +258,13 @@
     cursor: pointer; transition: background .2s;
   }
   .share-btn:hover { background: var(--purple-600); }
+  .img-action-row { display: flex; gap: 9px; }
+  .download-btn, .copy-btn {
+    flex: 1; padding: 11px; background: #fff; color: var(--purple-600);
+    font-size: 13px; font-weight: 600; border: 1.5px solid var(--purple-200);
+    border-radius: var(--radius-md); cursor: pointer; transition: background .15s;
+  }
+  .download-btn:hover, .copy-btn:hover { background: var(--purple-50); }
   .retry-btn {
     width: 100%; padding: 11px; background: #fff; color: var(--gray-600);
     font-size: 13px; font-weight: 600; border: 1.5px solid #E8E6E0;
@@ -350,7 +357,11 @@
       <div class="traits" id="result-traits"></div>
       <div class="result-desc" id="result-desc"></div>
       <div class="result-actions">
-        <button class="share-btn" id="share-btn" onclick="shareResult()">分享我的結果</button>
+        <button class="share-btn" id="share-btn" onclick="shareResult()">分享到社群</button>
+        <div class="img-action-row">
+          <button class="download-btn" id="download-btn" onclick="downloadResult()">⬇ 下載結果圖</button>
+          <button class="copy-btn" id="copy-btn" onclick="copyResult()">複製結果圖</button>
+        </div>
         <button class="retry-btn" onclick="restart()" id="retry-btn">↺ 再測一次</button>
       </div>
       <div class="phone-footer">粽說紛紜 · KrenzArtwork 端午節特別企劃</div>
@@ -734,7 +745,10 @@ function showResult() {
   const shareBtn = document.getElementById('share-btn');
   shareBtn.dataset.name = d.name;
   shareBtn.dataset.tagline = d.tagline;
-  shareBtn.textContent = lang === 'CN' ? '分享我的结果' : '分享我的結果';
+  shareBtn.dataset.img = r.img;
+  shareBtn.textContent = lang === 'CN' ? '分享到社群' : '分享到社群';
+  document.getElementById('download-btn').textContent = lang === 'CN' ? '⬇ 下载结果图' : '⬇ 下載結果圖';
+  document.getElementById('copy-btn').textContent = lang === 'CN' ? '复制结果图' : '複製結果圖';
   document.getElementById('retry-btn').textContent = lang === 'CN' ? '↺ 再测一次' : '↺ 再測一次';
 
   scrollTop();
@@ -749,17 +763,49 @@ function submitToNotion(result_key, result_name, score_a, score_b, score_c) {
   }).catch(() => {});
 }
 
-function shareResult() {
+async function shareResult() {
   const btn = document.getElementById('share-btn');
   const text = lang === 'CN'
     ? `🎋【粽说纷纭】KrenzArtwork端午节创作者灵魂测验\n\n我的结果是：${btn.dataset.name}\n「${btn.dataset.tagline}」\n\n快来测测你是哪种粽子！\n#端午节 #粽说纷纭 #KrenzArtwork`
     : `🎋【粽說紛紜】KrenzArtwork端午節創作者靈魂測驗\n\n我的結果是：${btn.dataset.name}\n「${btn.dataset.tagline}」\n\n快來測測你是哪種粽子！\n#端午節 #粽說紛紜 #KrenzArtwork`;
-  if (navigator.share) {
-    navigator.share({ text }).catch(() => {});
-  } else {
-    navigator.clipboard.writeText(text)
-      .then(() => showToast(lang === 'CN' ? '已复制到剪贴板！' : '已複製到剪貼簿！'))
-      .catch(() => showToast(lang === 'CN' ? '请手动复制' : '請手動複製'));
+  try {
+    const res = await fetch(btn.dataset.img);
+    const blob = await res.blob();
+    const file = new File([blob], `粽說紛紜_${btn.dataset.name}.jpg`, { type: blob.type });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], text });
+      return;
+    }
+  } catch(e) {
+    if (e.name === 'AbortError') return;
+  }
+  // fallback: 桌機或不支援帶圖分享 → 下載圖片
+  downloadResult();
+}
+
+async function downloadResult() {
+  const btn = document.getElementById('share-btn');
+  const a = document.createElement('a');
+  a.href = btn.dataset.img;
+  a.download = `粽說紛紜_${btn.dataset.name}.jpg`;
+  a.click();
+}
+
+async function copyResult() {
+  const btn = document.getElementById('share-btn');
+  try {
+    const img = new Image();
+    img.src = btn.dataset.img;
+    await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
+    const canvas = document.createElement('canvas');
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    canvas.getContext('2d').drawImage(img, 0, 0);
+    const pngBlob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+    await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob })]);
+    showToast(lang === 'CN' ? '已复制图片！' : '已複製圖片！');
+  } catch(e) {
+    showToast(lang === 'CN' ? '复制失败，请手动储存' : '複製失敗，請手動儲存');
   }
 }
 
