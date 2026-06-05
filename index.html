@@ -621,7 +621,10 @@ function getResult() {
   const q4 = answers[3];
 
   if (aCount > bCount) { return q4 === 'A' ? 'classic' : 'luxe'; }
-  if (bCount > aCount) { return q4 === 'C' ? 'lye' : 'sweet'; }
+  if (bCount > aCount) {
+    if (q4 === 'C') return 'lye';
+    return answers[5] === 'B' ? 'sweet' : 'lye';
+  }
   // 平手用 Q6 決勝
   const q6 = answers[5];
   if (q6 === 'C') return 'crystal';
