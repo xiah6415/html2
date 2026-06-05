@@ -252,12 +252,6 @@
     padding: 14px; margin-bottom: 20px; border-left: 3px solid var(--purple-400);
   }
   .result-actions { display: flex; flex-direction: column; gap: 9px; }
-  .share-btn {
-    width: 100%; padding: 14px; background: var(--purple-400); color: #fff;
-    font-size: 14px; font-weight: 700; border: none; border-radius: var(--radius-md);
-    cursor: pointer; transition: background .2s;
-  }
-  .share-btn:hover { background: var(--purple-600); }
   .img-action-row { display: flex; gap: 9px; }
   .download-btn, .copy-btn {
     flex: 1; padding: 11px; background: #fff; color: var(--purple-600);
@@ -378,7 +372,6 @@
       <div class="traits" id="result-traits"></div>
       <div class="result-desc" id="result-desc"></div>
       <div class="result-actions">
-        <button class="share-btn" id="share-btn" onclick="shareResult()">分享到社群</button>
         <div class="img-action-row">
           <button class="download-btn" id="download-btn" onclick="downloadResult()">⬇ 下載結果圖</button>
           <button class="copy-btn" id="copy-btn" onclick="copyResult()">複製結果圖</button>
@@ -774,11 +767,8 @@ function showResult() {
   document.getElementById('result-traits').innerHTML = d.traits.map(t => `<span class="trait">${t}</span>`).join('');
   document.getElementById('result-desc').textContent = d.desc;
 
-  const shareBtn = document.getElementById('share-btn');
-  shareBtn.dataset.name = d.name;
-  shareBtn.dataset.tagline = d.tagline;
-  shareBtn.dataset.img = r.img;
-  shareBtn.textContent = lang === 'CN' ? '分享到社群' : '分享到社群';
+  _resultName = d.name;
+  _resultImg = r.img;
   document.getElementById('download-btn').textContent = lang === 'CN' ? '⬇ 下载结果图' : '⬇ 下載結果圖';
   document.getElementById('copy-btn').textContent = lang === 'CN' ? '复制结果图' : '複製結果圖';
   document.getElementById('retry-btn').textContent = lang === 'CN' ? '↺ 再测一次' : '↺ 再測一次';
@@ -796,6 +786,8 @@ function submitToNotion(result_key, result_name, score_a, score_b, score_c) {
 }
 
 let _modalBlobUrl = null;
+let _resultName = '';
+let _resultImg = '';
 
 async function generateCardImage() {
   const card = document.getElementById('result-hero');
@@ -822,39 +814,14 @@ function closeImageModal() {
 
 function downloadFromModal() {
   if (!_modalBlobUrl) return;
-  const btn = document.getElementById('share-btn');
   const a = document.createElement('a');
   a.href = _modalBlobUrl;
-  a.download = `粽說紛紜_${btn.dataset.name}.png`;
+  a.download = `粽說紛紜_${_resultName}.png`;
   a.click();
-}
-
-async function shareResult() {
-  const btn = document.getElementById('share-btn');
-  const text = lang === 'CN'
-    ? `🎋【粽说纷纭】KrenzArtwork端午节创作者灵魂测验\n\n我的结果是：${btn.dataset.name}\n「${btn.dataset.tagline}」\n\n快来测测你是哪种粽子！\n#端午节 #粽说纷纭 #KrenzArtwork`
-    : `🎋【粽說紛紜】KrenzArtwork端午節創作者靈魂測驗\n\n我的結果是：${btn.dataset.name}\n「${btn.dataset.tagline}」\n\n快來測測你是哪種粽子！\n#端午節 #粽說紛紜 #KrenzArtwork`;
-  btn.textContent = '生成中…';
-  btn.disabled = true;
-  try {
-    const blob = await generateCardImage();
-    const file = new File([blob], `粽說紛紜_${btn.dataset.name}.png`, { type: 'image/png' });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({ files: [file], text });
-    } else {
-      showImageModal(blob, lang === 'CN' ? '长按图片分享或储存' : '長按圖片分享或儲存');
-    }
-  } catch(e) {
-    if (e.name !== 'AbortError') showToast(lang === 'CN' ? '生成失败' : '生成失敗');
-  } finally {
-    btn.textContent = '分享到社群';
-    btn.disabled = false;
-  }
 }
 
 async function downloadResult() {
   const dlBtn = document.getElementById('download-btn');
-  const btn = document.getElementById('share-btn');
   const origText = dlBtn.textContent;
   dlBtn.textContent = '生成中…';
   dlBtn.disabled = true;
@@ -863,7 +830,7 @@ async function downloadResult() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `粽說紛紜_${btn.dataset.name}.png`;
+    a.download = `粽說紛紜_${_resultName}.png`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 5000);
   } catch(e) {
