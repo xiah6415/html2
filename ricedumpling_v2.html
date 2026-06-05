@@ -272,6 +272,27 @@
   }
   .retry-btn:hover { background: var(--gray-50); }
 
+  /* Image modal */
+  #img-modal {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,.88);
+    z-index: 9999; align-items: center; justify-content: center; padding: 24px;
+  }
+  #img-modal.show { display: flex; }
+  #img-modal .modal-inner { position: relative; max-width: 360px; width: 100%; text-align: center; }
+  #img-modal .modal-img { width: 100%; border-radius: 12px; display: block; }
+  #img-modal .modal-hint { color: rgba(255,255,255,.8); font-size: 13px; margin-top: 10px; line-height: 1.5; }
+  #img-modal .modal-close {
+    position: absolute; top: -14px; right: -14px; width: 30px; height: 30px;
+    border-radius: 50%; background: #fff; border: none; font-size: 18px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: #333; line-height: 1;
+  }
+  #img-modal .modal-dl {
+    display: inline-block; margin-top: 12px; padding: 10px 22px;
+    background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.4);
+    border-radius: 8px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+
   .phone-footer { text-align: center; font-size: 11px; color: var(--gray-400); padding: 16px 0 8px; border-top: 1px solid #F0EDE8; margin: 20px 0 0; }
 
   .home-bar { height: 28px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -372,6 +393,17 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- Image modal -->
+<div id="img-modal" onclick="if(event.target===this)closeImageModal()">
+  <div class="modal-inner">
+    <button class="modal-close" onclick="closeImageModal()">×</button>
+    <img class="modal-img" id="modal-img" alt="">
+    <p class="modal-hint" id="modal-hint">長按圖片可儲存或複製</p>
+    <button class="modal-dl" onclick="downloadFromModal()">⬇ 下載圖片</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
 <script>
 let lang = 'TW';
 let cur = 0;
@@ -760,49 +792,107 @@ function submitToNotion(result_key, result_name, score_a, score_b, score_c) {
   }).catch(() => {});
 }
 
+let _modalBlobUrl = null;
+
+async function generateCardImage() {
+  const card = document.getElementById('result-hero');
+  const canvas = await html2canvas(card, {
+    backgroundColor: '#ffffff',
+    scale: 2,
+    useCORS: true,
+    logging: false
+  });
+  return new Promise(res => canvas.toBlob(res, 'image/png'));
+}
+
+function showImageModal(blob, hint) {
+  if (_modalBlobUrl) URL.revokeObjectURL(_modalBlobUrl);
+  _modalBlobUrl = URL.createObjectURL(blob);
+  document.getElementById('modal-img').src = _modalBlobUrl;
+  document.getElementById('modal-hint').textContent = hint || '長按圖片可儲存或複製';
+  document.getElementById('img-modal').classList.add('show');
+}
+
+function closeImageModal() {
+  document.getElementById('img-modal').classList.remove('show');
+}
+
+function downloadFromModal() {
+  if (!_modalBlobUrl) return;
+  const btn = document.getElementById('share-btn');
+  const a = document.createElement('a');
+  a.href = _modalBlobUrl;
+  a.download = `粽說紛紜_${btn.dataset.name}.png`;
+  a.click();
+}
+
 async function shareResult() {
   const btn = document.getElementById('share-btn');
   const text = lang === 'CN'
     ? `🎋【粽说纷纭】KrenzArtwork端午节创作者灵魂测验\n\n我的结果是：${btn.dataset.name}\n「${btn.dataset.tagline}」\n\n快来测测你是哪种粽子！\n#端午节 #粽说纷纭 #KrenzArtwork`
     : `🎋【粽說紛紜】KrenzArtwork端午節創作者靈魂測驗\n\n我的結果是：${btn.dataset.name}\n「${btn.dataset.tagline}」\n\n快來測測你是哪種粽子！\n#端午節 #粽說紛紜 #KrenzArtwork`;
+  btn.textContent = '生成中…';
+  btn.disabled = true;
   try {
-    const res = await fetch(btn.dataset.img);
-    const blob = await res.blob();
-    const file = new File([blob], `粽說紛紜_${btn.dataset.name}.jpg`, { type: blob.type });
+    const blob = await generateCardImage();
+    const file = new File([blob], `粽說紛紜_${btn.dataset.name}.png`, { type: 'image/png' });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       await navigator.share({ files: [file], text });
-      return;
+    } else {
+      showImageModal(blob, lang === 'CN' ? '长按图片分享或储存' : '長按圖片分享或儲存');
     }
   } catch(e) {
-    if (e.name === 'AbortError') return;
+    if (e.name !== 'AbortError') showToast(lang === 'CN' ? '生成失败' : '生成失敗');
+  } finally {
+    btn.textContent = '分享到社群';
+    btn.disabled = false;
   }
-  downloadResult();
 }
 
 async function downloadResult() {
+  const dlBtn = document.getElementById('download-btn');
   const btn = document.getElementById('share-btn');
-  const a = document.createElement('a');
-  a.href = btn.dataset.img;
-  a.download = `粽說紛紜_${btn.dataset.name}.jpg`;
-  a.click();
+  const origText = dlBtn.textContent;
+  dlBtn.textContent = '生成中…';
+  dlBtn.disabled = true;
+  try {
+    const blob = await generateCardImage();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `粽說紛紜_${btn.dataset.name}.png`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  } catch(e) {
+    showToast(lang === 'CN' ? '下载失败' : '下載失敗');
+  } finally {
+    dlBtn.textContent = origText;
+    dlBtn.disabled = false;
+  }
 }
 
 async function copyResult() {
-  const btn = document.getElementById('share-btn');
+  const copyBtn = document.getElementById('copy-btn');
+  const origText = copyBtn.textContent;
+  copyBtn.textContent = '生成中…';
+  copyBtn.disabled = true;
+  let blob;
   try {
-    const img = new Image();
-    img.src = btn.dataset.img;
-    await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
-    const canvas = document.createElement('canvas');
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-    canvas.getContext('2d').drawImage(img, 0, 0);
-    const pngBlob = await new Promise(res => canvas.toBlob(res, 'image/png'));
-    await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob })]);
+    blob = await generateCardImage();
+  } catch(e) {
+    showToast(lang === 'CN' ? '生成失败' : '生成失敗');
+    copyBtn.textContent = origText;
+    copyBtn.disabled = false;
+    return;
+  }
+  try {
+    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
     showToast(lang === 'CN' ? '已复制图片！' : '已複製圖片！');
   } catch(e) {
-    showToast(lang === 'CN' ? '复制失败，请手动储存' : '複製失敗，請手動儲存');
+    showImageModal(blob, lang === 'CN' ? '长按图片可复制或储存' : '長按圖片可複製或儲存');
   }
+  copyBtn.textContent = origText;
+  copyBtn.disabled = false;
 }
 
 function showToast(msg) {
